@@ -7,7 +7,8 @@ import scanpy as sc
 import torch
 
 from sklearn.metrics import adjusted_rand_score,normalized_mutual_info_score,homogeneity_score,completeness_score
-from kontext.clustering import gmm_clustering,kmeans_clustering,mclust_clustering,leiden_clustering
+from kontext.clustering import gmm_clustering,kmeans_clustering
+from utils.clustering import mclust_clustering,leiden_clustering
 
 
 def compute_SEDR_embedding(adata,seed,n_components=200,n_neighbors=12):
@@ -110,7 +111,7 @@ def benchmark_path(data):
 
 def compute_Kontext_embedding(adata,sigma_e=1, snn=20, alpha=1):
     from kontext.kontext_class import Kontext
-    context = NContext(sigma_e=sigma_e, snn=snn, alpha=alpha,verbose=True)
+    context = Kontext(sigma_e=sigma_e, snn=snn, alpha=alpha,verbose=True)
     context.fit(adata,add_layer=True)
     return(adata)
 
@@ -132,34 +133,34 @@ def clustering_benchmark(adata,clustering,seed,matrix_key='E_pca'):
     "BANKSY_leiden": leiden_clustering,
     }[clustering]
 
-    params0 = {'clustering':clustering,"seed":seed, "n_clusters":adata.uns['data']['n_clusters']} 
+    params0 = {'clustering':clustering,"seed":seed, "n_domains":adata.uns['data']['n_domains']} 
     params =  {k: v for k, v in params0.items() if k != "clustering"}
     matrix = adata.obsm[matrix_key]
     labels = fn(matrix=adata.obsm[matrix_key], **params)
-    adata.obs["clustering"] = pd.Categorical(labels)
+    adata.obs["spatial_domains"] = pd.Categorical(labels)
 
 
-def scores_benchmark(adata,ground_truth='annotation',clustering='clustering',spatial='spatial'):
+def scores_benchmark(adata,ground_truth='annotation',spatial_domains='spatial_domains',spatial='spatial'):
 
         out = {}
         print('ARI',end=' ')
-        out['ARI'] = adjusted_rand_score(adata.obs[ground_truth],adata.obs[clustering])
+        out['ARI'] = adjusted_rand_score(adata.obs[ground_truth],adata.obs[spatial_domains])
         print(out['ARI'])
         print('NMI',end=' ')
-        out['NMI'] = normalized_mutual_info_score(adata.obs[ground_truth],adata.obs[clustering])
+        out['NMI'] = normalized_mutual_info_score(adata.obs[ground_truth],adata.obs[spatial_domains])
         print(out['NMI'])
         print('HOM',end=' ')
-        out['HOM'] = homogeneity_score(adata.obs[ground_truth],adata.obs[clustering])
+        out['HOM'] = homogeneity_score(adata.obs[ground_truth],adata.obs[spatial_domains])
         print(out['HOM'])
         print('COM',end=' ')
-        out['COM'] = completeness_score(adata.obs[ground_truth],adata.obs[clustering])
+        out['COM'] = completeness_score(adata.obs[ground_truth],adata.obs[spatial_domains])
         print(out['COM'])
     
         return(out)
 
 
-def run_benchmark(data,matrix,embedding,clustering,preprocessing=None,additional_info=None,save_clustering=False):
-    from kontext.data import load_and_preprocess_adata
+def run_benchmark(data,matrix,embedding,spatial_domains,preprocessing=None,additional_info=None,save_clustering=False):
+    from utils.load_data import load_and_preprocess_adata
     from kontext.utils import format_time,format_size,Profiler,format_value,format_key
     if additional_info is None:     
         additional_info = {} 
@@ -168,10 +169,10 @@ def run_benchmark(data,matrix,embedding,clustering,preprocessing=None,additional
     print('preprocessing',preprocessing)
     print('matrix',matrix)
     print('embedding',embedding)
-    print('clustering',clustering)
+    print('spatial_domains',spatial_domains)
     print('additional_info',additional_info)
     print('benchmark_path')
-    signature = "_".join(f"{format_key(k)}{format_value(v)}" for k, v in {'matrix':matrix,**preprocessing,**embedding,**clustering}.items() if v is not None)
+    signature = "_".join(f"{format_key(k)}{format_value(v)}" for k, v in {'matrix':matrix,**preprocessing,**embedding,**spatial_domains}.items() if v is not None)
     path = benchmark_path(data)
     p = path / f'{signature}.json'
     pclust = path / f'{signature}_clustering.csv'
@@ -181,7 +182,7 @@ def run_benchmark(data,matrix,embedding,clustering,preprocessing=None,additional
     signature_dataset = "_".join(f"{format_value(v)}" for k, v in data.items() if v is not None)
     signature_preprocessing = "_".join(f"{format_key(k)}{format_value(v)}" for k, v in {'matrix':matrix,**preprocessing}.items() if v is not None)
     signature_embedding = "_".join(f"{format_key(k)}{format_value(v)}" for k, v in {'matrix':matrix,**embedding}.items() if v is not None)
-    signature_clustering = "_".join(f"{format_key(k)}{format_value(v)}" for k, v in {'matrix':matrix,**clustering}.items() if v is not None)
+    signature_spatial_domains = "_".join(f"{format_key(k)}{format_value(v)}" for k, v in {'matrix':matrix,**spatial_domains}.items() if v is not None)
     
     
     
@@ -231,15 +232,15 @@ def run_benchmark(data,matrix,embedding,clustering,preprocessing=None,additional
     print(f'{format_time(embedding_time)}  {format_size(b1)}')
 
 
-    print('clustering')
+    print('spatial_domains')
     start_2 = time()
     tracemalloc.start()
-    clustering_benchmark(adata,**clustering)
+    clustering_benchmark(adata,**spatial_domains)
     clustering_time = time() - start_2
     mem = tracemalloc.get_traced_memory()
     a2,b2 = mem[0],mem[1]
     tracemalloc.stop()
-    print(f'{format_time(clustering_time)}  {format_size(b2)}')
+    print(f'{format_time(spatial_domains_time)}  {format_size(b2)}')
     
     print('scores')
     start_2 = time()
@@ -274,17 +275,17 @@ def run_benchmark(data,matrix,embedding,clustering,preprocessing=None,additional
             'loading_memory_b':b3,
             **adata.uns['data'],
             'embedding_params':embedding,
-            'clustering_params':clustering,
+            'spatial_domains_params':spatial_domains,
             'matrix':matrix,
             **embedding,
-            **clustering,
+            **spatial_domains,
             **scores,
             **preprocessing,
             **additional_info,
             'signature_dataset':signature_dataset,
             'signature_preprocessing':signature_preprocessing,
             'signature_embedding':signature_embedding,
-            'signature_clustering':signature_clustering,
+            'signature_spatial_domains':signature_spatial_domains,
             **new_time
             }
     
@@ -294,8 +295,8 @@ def run_benchmark(data,matrix,embedding,clustering,preprocessing=None,additional
     with open(p, "w") as f:
         json.dump(out, f, indent=2)
 
-    if clustering['seed']==0:
-        adata.obs["clustering"].to_csv(pclust)
+    if spatial_domains['seed']==0:
+        adata.obs["spatial_domains"].to_csv(pclust)
 
 
 def run_benchmark_wrapper(param):

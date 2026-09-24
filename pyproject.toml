@@ -73,4 +73,5 @@ where = ["src"]
 
 [tool.uv.sources]
 sedr = { git = "https://github.com/JinmiaoChenLab/SEDR.git" }
-kontext = { git = "https://github.com/cantinilab/kontext.git"}
+# kontext = { git = "https://github.com/cantinilab/kontext.git"}
+# kontext = { path = "../kontext" }

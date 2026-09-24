@@ -25,11 +25,11 @@ def get_dataset_info():
 
 
 
-def get_n_clusters(dataset,sample,annotation=None):
-    n_clusters = get_dataset_info()[dataset][sample]['n_clusters']
+def get_n_domains(dataset,sample,annotation=None):
+    n_domains = get_dataset_info()[dataset][sample]['n_domains']
     if dataset == 'MBA':
-        n_clusters = n_clusters[annotation]
-    return(n_clusters)
+        n_domains = n_domains[annotation]
+    return(n_domains)
 
 def load_adata(dataset,sample,keep_counts=False,annotation='tissue'):
 
@@ -51,7 +51,7 @@ def load_adata(dataset,sample,keep_counts=False,annotation='tissue'):
         adata.layers['counts'] = adata.X
     if adata.is_view:
         adata = adata.copy()
-    adata.uns['data'] = {'dataset':dataset,'sample':sample,'annotation':annotation,'n_clusters':get_n_clusters(dataset,sample,annotation)}
+    adata.uns['data'] = {'dataset':dataset,'sample':sample,'annotation':annotation,'n_domains':get_n_domains(dataset,sample,annotation)}
     return(adata)
 
 
@@ -322,8 +322,8 @@ def load_CARDIO(sample):
 
 def load_and_preprocess_adata(data_info,preprocessing_params=None,ref_method=None,keep_counts=False):
     if ref_method is not None:
-        keep_counts = keep_counts or ref_method in ['SEDR','STAGATE','BANKSY','GraphST'] or preprocessing_params['preprocessing'] in ['large2svg','large3svg']
-    if 'svg' in str(preprocessing_params['preprocessing']) or preprocessing_params['preprocessing'] in ['xenium']:
+        keep_counts = keep_counts or ref_method in ['SEDR','STAGATE','BANKSY','GraphST'] or preprocessing_params['preprocessing'] in ['sparse_hvg','large3svg']
+    if 'hvg' in str(preprocessing_params['preprocessing']) or preprocessing_params['preprocessing'] in ['image']:
         keep_counts=True
 
     # if preprocessing_params is None:

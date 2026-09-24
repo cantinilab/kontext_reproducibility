@@ -5,11 +5,11 @@ import numpy as np
 # import pandas as pd
 
 
-def mclust_clustering(n_clusters,seed,matrix):
+def mclust_clustering(n_domains,seed,matrix):
     import os
         # os.environ['R_HOME'] = '/scbio4/tools/R/R-4.0.3_openblas/R-4.0.3'
     os.environ['R_HOME'] = '/opt/gensoft/exe/R/4.5.0/lib64/R'
-    if n_clusters < 50:
+    if n_domains < 50:
         modelNames = 'EEE'    
     else:
         modelNames = 'EEV'
@@ -21,7 +21,7 @@ def mclust_clustering(n_clusters,seed,matrix):
     rmclust = robjects.r['Mclust']
     from rpy2.robjects import default_converter, conversion, numpy2ri
     with conversion.localconverter(default_converter + numpy2ri.converter):
-        r_res = rmclust(matrix,n_clusters, modelNames)
+        r_res = rmclust(matrix,n_domains, modelNames)
         mclust_res = np.array(r_res[-2])#.rx2('classification'))
     return(mclust_res)    
 
@@ -51,14 +51,14 @@ def leiden_clustering(resolution,seed,matrix,num_nn=50,num_iterations=-1):
     
 
 
-# def compute_kmeans_clustering(adata,n_clusters,seed,slot):
+# def compute_kmeans_clustering(adata,n_domains,seed,slot):
 #     X = adata.obsm[slot]
-#     kmeans = KMeans(n_clusters=n_clusters,random_state=seed).fit(X)
+#     kmeans = KMeans(n_domains=n_domains,random_state=seed).fit(X)
 #     return(kmeans.labels_)
 
-# def compute_gmm_clustering(adata,n_clusters,seed,slot,reg_covar=1e-5):
+# def compute_gmm_clustering(adata,n_domains,seed,slot,reg_covar=1e-5):
 #     X = adata.obsm[slot]
-#     gmm = GaussianMixture(n_components=n_clusters,random_state=seed,reg_covar=reg_covar).fit(X)
+#     gmm = GaussianMixture(n_components=n_domains,random_state=seed,reg_covar=reg_covar).fit(X)
 #     return(gmm.predict(X))
 
 # def compute_louvain_clustering(adata,n_neighbors,seed,slot):
@@ -90,7 +90,7 @@ def leiden_clustering(resolution,seed,matrix,num_nn=50,num_iterations=-1):
 #     )
 #     return(results_df)
 
-# def SEDR_mclust_R(adata, n_clusters,seed,slot):
+# def SEDR_mclust_R(adata, n_domains,seed,slot):
 #     """\
 #     Clustering using the mclust algorithm.
 #     The parameters are the same as those in the R package mclust.
@@ -108,7 +108,7 @@ def leiden_clustering(resolution,seed,matrix,num_nn=50,num_iterations=-1):
 
 #     from rpy2.robjects import default_converter, conversion, numpy2ri
 #     with conversion.localconverter(default_converter + numpy2ri.converter):
-#         r_res = rmclust(adata.obsm[slot], n_clusters, modelNames)
+#         r_res = rmclust(adata.obsm[slot], n_domains, modelNames)
 #         mclust_res = np.array(r_res[-2])#.rx2('classification'))
     
 #     return(mclust_res)
@@ -142,11 +142,11 @@ def leiden_clustering(resolution,seed,matrix,num_nn=50,num_iterations=-1):
 #                                                          'resolution':np.float64(resolution),
 #                                                          'num_nn':num_nn,
 #                                                          'num_iterations':num_iterations,},
-#                                     'need_n_clusters':False}]
+#                                     'need_n_domains':False}]
 #             else:
 #                 clusterings += [{'clustering_key':cl_key,
 #                                 'clustering_params':{'seed':int(seed)},
-#                                 'need_n_clusters':True}]
+#                                 'need_n_domains':True}]
 #     return(clusterings)
 
 # def get_clustering_function_from_key(key):
@@ -168,7 +168,7 @@ def leiden_clustering(resolution,seed,matrix,num_nn=50,num_iterations=-1):
 
 
 #                 # clustering='kmeans',
-#                 # n_clusters=None,
+#                 # n_domains=None,
 #                 # n_neighbors=None,
 #                 # flavor='igraph',
 #                 # n_iterations=None,
@@ -177,8 +177,8 @@ def leiden_clustering(resolution,seed,matrix,num_nn=50,num_iterations=-1):
 #     clustering_params_str = f'{clustering_str}'
 #     if clustering_key in ['kmeans','gmm','mclust']:
 #         seed = clustering_params['seed']
-#         n_clusters = clustering_params['n_clusters']
-#         clustering_params_str += f'_s{seed}_nc{n_clusters}'
+#         n_domains = clustering_params['n_domains']
+#         clustering_params_str += f'_s{seed}_nc{n_domains}'
 #     if clustering_key in ['louvain','leiden']:
 #         seed = clustering_params['seed']
 #         n_neighbors = clustering_params['n_neighbors']
@@ -201,7 +201,7 @@ def leiden_clustering(resolution,seed,matrix,num_nn=50,num_iterations=-1):
             
 #             clustering_params = {
 #                 'seed':int(seed),
-#                 'n_clusters':int(nc)}
+#                 'n_domains':int(nc)}
         
 #         if clustering_str == 'bleiden':
 #             clustering_key = 'BANKSY_leiden'
@@ -235,7 +235,7 @@ def leiden_clustering(resolution,seed,matrix,num_nn=50,num_iterations=-1):
 #                 df_['resolution'] = df_['clustering_params'].apply(lambda x: get_clustering_param_from_str('bleiden',x)['clustering_params']['resolution'])
 #                 df_['partition_seed'] = df_['clustering_params'].apply(lambda x: get_clustering_param_from_str('bleiden',x)['clustering_params']['partition_seed'])
 #             if clustering in ['gmm','mclust']:
-#                 df_['nc'] = df_['clustering_params'].apply(lambda x: get_clustering_param_from_str(clustering,x)['clustering_params']['n_clusters'])
+#                 df_['nc'] = df_['clustering_params'].apply(lambda x: get_clustering_param_from_str(clustering,x)['clustering_params']['n_domains'])
 #                 df_['seed'] = df_['clustering_params'].apply(lambda x: get_clustering_param_from_str(clustering,x)['clustering_params']['seed'])
 #             dfs += [df_]
 #         df = pd.concat(dfs)

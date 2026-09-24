@@ -183,7 +183,7 @@ def plot_sample_heatmap(
     best_counts = np.zeros((n_metrics, n_methods), int)
 
     for qi, metric in enumerate(metrics):
-        print(metric)
+        # print(metric)
         reverse = metric in lower_better
         cmap = plt.cm.get_cmap(cmap_name + ('_r' if reverse else ''))
         for si in range(n_samples):
@@ -339,7 +339,7 @@ def plot_metric_vs_nobs(
     Method order (and thus colours) follow first appearance in the data,
     so they stay consistent across plots.
     y-ticks are formatted with format_time / format_size when relevant."""
-    from kontext.data import get_dataset_info
+    from utils.load_data import get_dataset_info
 
     aggf      = np.median if agg == 'median' else np.mean
     n_obs_of  = lambda ds, sn: get_dataset_info()[ds][sn]['n_obs']
