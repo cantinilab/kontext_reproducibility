@@ -134,6 +134,30 @@ def _scores_to_dataframe(sample_keys, tensor, methods, metrics, sep=' | '):
     return pd.DataFrame(data, index=sample_keys, columns=columns)
 
 
+def readable_dataset_name(dataset):
+    return(dataset.replace('ZESTA','Zebrafish embryo').replace('MOSTA','Mouse embryo').replace('ARTISTA','Axolotl').replace('MBA','Mouse brain atlas'))
+
+def readable_sample_name(sample):
+    if 'zf' in sample:
+        day,section = sample.split('_')
+        day = day.replace('zf','day ')
+        section = f'section {section}'
+        sample = f'{day}, {section}'
+    if 'E1S1' in sample:
+        sample = sample.split('_')[0]
+        sample = sample.replace('E','day ')
+    if 'DPI' in sample:
+        if len(sample.split('_')) == 2:
+            day,section = sample.replace('DPI','').split('_')
+            sample = f'day {day} after injury, section {section}'
+        else:
+            day = sample.replace('DPI','')
+            sample = f'day {day} after injury'
+
+    if 'C57BL6J' in sample:
+        section = sample.split('_')[-1]
+        sample = f'section {section}'
+    return(sample)
 
 def plot_sample_heatmap(
     results,
@@ -157,7 +181,7 @@ def plot_sample_heatmap(
     sample_keys, scores = _aggregate_per_sample(
         results, group_col, metrics, methods, agg_fn)
 
-    sample_labels = [k.split('+', 1)[1] for k in sample_keys]
+    sample_labels = [readable_sample_name(k.split('+', 1)[1]) for k in sample_keys]
     datasets = [k.split('+', 1)[0] for k in sample_keys]
 
     n_samples = len(sample_keys)
@@ -188,7 +212,7 @@ def plot_sample_heatmap(
         cmap = plt.cm.get_cmap(cmap_name + ('_r' if reverse else ''))
         for si in range(n_samples):
             row = scores[si, qi, :]
-            print(sample_keys[si],row)
+            # print(sample_keys[si],row)
             if not np.isfinite(row).any():
                 continue
             lo, hi = np.nanmin(row), np.nanmax(row)
@@ -238,7 +262,7 @@ def plot_sample_heatmap(
     for si in range(n_samples):
         if si == 0 or datasets[si] != datasets[si - 1]:
             ax.text(-0.55, y[si] - rect_height / 2 - group_gap * 0.05,
-                    datasets[si], ha='left', va='bottom',
+                    readable_dataset_name(datasets[si]), ha='left', va='bottom',
                     fontsize=fontsize_ticks + 2, fontweight='bold', color='#333333')
 
     y_top = y[-1] + rect_height / 2 + 0.2

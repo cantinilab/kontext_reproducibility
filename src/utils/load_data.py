@@ -194,9 +194,9 @@ def load_LYMPH(sample):
         'Plasma_IgA':'Plasma IgA',
         'Germinal_Center_Plasma_IgM_B_cell':'Plasma IgM',
         'Tumor_Keratin_Pearl':'Keratin Pearl',
-        'Dendritic_cells':'Dendritic cell',
+        'Dendritic_cells':'other',
         'Cytotoxic_IFN_signaling':'other',
-        'Mast_cells':'Mast cell',
+        'Mast_cells':'other',
         'Cortex_CCL21':'other'}
         adata.obs['annotation'] = adata.obs['annotation'].map(annot_to_new)
 
