@@ -82,7 +82,7 @@ def _collect_methods(results, group_col):
                     methods.append(m)
     return methods
 
-def _aggregate_per_sample(results, group_col, metrics, methods, agg_fn):
+def _aggregate_per_sample(results, group_col, metrics, methods, agg_fn,perfect=True):
     valid_keys = [k for k, r in results.items() if len(r) > 0]
 
     datasets, seen_datasets = [], set()
@@ -108,8 +108,13 @@ def _aggregate_per_sample(results, group_col, metrics, methods, agg_fn):
             sub = df[df[group_col] == method]
             for qi, metric in enumerate(metrics):
                 vals = sub[metric].dropna().values if metric in sub else []
-                if len(vals)==100:
-                    scores[si, qi, mi] = agg_fn(vals)
+                if perfect : 
+                    if len(vals)==100 :
+                        scores[si, qi, mi] = agg_fn(vals)
+                else:
+                    if len(vals)>0:
+                        scores[si, qi, mi] = agg_fn(vals)
+                        # print(len(vals),si,qi,mi)
 
     return sample_keys, scores
 
@@ -174,12 +179,13 @@ def plot_sample_heatmap(
     fontsize_scores=6.5,
     rect_width=0.85,
     rect_height=0.45,
-    row_spacing=None,):
+    row_spacing=None,
+    perfect = True):
 
     agg_fn = np.median if agg == 'median' else np.mean if agg == 'mean' else np.std if agg =='std' else lambda x: np.mean(x) - np.std(x)
     methods = _collect_methods(results, group_col)
     sample_keys, scores = _aggregate_per_sample(
-        results, group_col, metrics, methods, agg_fn)
+        results, group_col, metrics, methods, agg_fn,perfect = perfect)
 
     sample_labels = [readable_sample_name(k.split('+', 1)[1]) for k in sample_keys]
     datasets = [k.split('+', 1)[0] for k in sample_keys]
@@ -286,7 +292,8 @@ def plot_dataset_rank_dotplot(
     dodge=0.10,
     marker_size=45,
     cap_size=2,
-    figsize=None,):
+    figsize=None,
+    perfect=True):
     """
     Cleveland dot plot of method ranks: one panel per metric.
     Returns a DataFrame (rows = samples, cols = 'method | metric')
@@ -297,7 +304,7 @@ def plot_dataset_rank_dotplot(
 
     agg_fn = np.median if agg == 'median' else np.mean
     methods = _collect_methods(results, group_col)
-    sample_keys, sample_scores = _aggregate_per_sample(results, group_col, metrics, methods, agg_fn)
+    sample_keys, sample_scores = _aggregate_per_sample(results, group_col, metrics, methods, agg_fn,perfect = perfect)
     sample_ranks = _rank_methods_per_sample(sample_scores, metrics, lower_better)
     unique_datasets, mean_ranks, std_ranks = _rank_dataset_stats(sample_keys, sample_ranks)
 

@@ -240,7 +240,7 @@ def run_benchmark(data,matrix,embedding,spatial_domains,preprocessing=None,addit
     mem = tracemalloc.get_traced_memory()
     a2,b2 = mem[0],mem[1]
     tracemalloc.stop()
-    print(f'{format_time(spatial_domains_time)}  {format_size(b2)}')
+    print(f'{format_time(clustering_time)}  {format_size(b2)}')
     
     print('scores')
     start_2 = time()
