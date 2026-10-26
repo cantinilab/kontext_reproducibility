@@ -145,7 +145,7 @@ def readable_dataset_name(dataset):
 def readable_sample_name(sample):
     if 'zf' in sample:
         day,section = sample.split('_')
-        day = day.replace('zf','day ')
+        day = day.replace('zf','hour ')
         section = f'section {section}'
         sample = f'{day}, {section}'
     if 'E1S1' in sample:

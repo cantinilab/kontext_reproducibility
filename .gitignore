@@ -45,6 +45,7 @@ data/
 *.csv.gz
 *.tar
 *.zip
+*.csv
 
 # OS
 .DS_Store

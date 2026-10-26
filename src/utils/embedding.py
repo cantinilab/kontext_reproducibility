@@ -102,10 +102,10 @@ def compute_BANKSY_embedding(adata,k_geom=18,nbr_weight_decay='scaled_gaussian',
 
 
 
-def benchmark_path(data):
+def benchmark_path(data,root='.'):
     from kontext.utils import format_value
     signature_dataset = "_".join(f"{format_value(v)}" for k, v in data.items() if v is not None)
-    path = Path(f"/pasteur/helix/projects/ml4ig_hot/Users/aozierla/kontext_project/results/benchmark_2026_07/{signature_dataset}/")
+    path = Path(f"{root}/{signature_dataset}/")
     path.mkdir(parents=True, exist_ok=True)
     return(path)
 
@@ -159,7 +159,7 @@ def scores_benchmark(adata,ground_truth='annotation',spatial_domains='spatial_do
         return(out)
 
 
-def run_benchmark(data,matrix,embedding,spatial_domains,preprocessing=None,additional_info=None,save_clustering=False):
+def run_benchmark(data,matrix,embedding,spatial_domains,preprocessing=None,additional_info=None,save_clustering=False,root='.'):
     from utils.load_data import load_and_preprocess_adata
     from kontext.utils import format_time,format_size,Profiler,format_value,format_key
     if additional_info is None:     
@@ -173,7 +173,7 @@ def run_benchmark(data,matrix,embedding,spatial_domains,preprocessing=None,addit
     print('additional_info',additional_info)
     print('benchmark_path')
     signature = "_".join(f"{format_key(k)}{format_value(v)}" for k, v in {'matrix':matrix,**preprocessing,**embedding,**spatial_domains}.items() if v is not None)
-    path = benchmark_path(data)
+    path = benchmark_path(data,root=root)
     p = path / f'{signature}.json'
     pclust = path / f'{signature}_clustering.csv'
     print(p)
