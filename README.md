@@ -2,17 +2,23 @@
   <img src="assets/logo.png" alt="kontext logo" width="300"/>
 </p>
 
-<h1 align="center">kontext</h1>
+<h1 align="center">Kontext</h1>
 
 <p align="center">
   Kernel-based method bridging spatial domain identification and cell-cell communication.
 </p>
 
 
-# kontext
+# Presentation
 
-**kontext** is a Python package for spatial transcriptomics data analysis.   
-It provides tools for spatial domains identification, ligand-receptor scoring, niche analysis and local alignement scoring.
+This repository contains the reproducibility notebooks associated to the Kontext publication. 
+There are three notebooks : 
+- `benchmark.ipynb` : to compute the benchmark results and generate the associated figures 
+- `mouse_cardiac_injury.ipynb` : to run the analysis of the temporal Xenium dataset presented in the paper. 
+- `metastatic_lymph_node.ipynb` : to run the analysis of the 3D OpenST dataset presented in the paper
+
+The functions that are note in the package and that are defined specifically for these results are stored in the `src/utils` directory. 
+
 
 ---
 
