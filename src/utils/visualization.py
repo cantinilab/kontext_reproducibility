@@ -215,7 +215,7 @@ def plot_sample_heatmap(
     for qi, metric in enumerate(metrics):
         # print(metric)
         reverse = metric in lower_better
-        cmap = plt.cm.get_cmap(cmap_name + ('_r' if reverse else ''))
+        cmap = plt.colormaps.get_cmap(cmap_name + ('_r' if reverse else ''))
         for si in range(n_samples):
             row = scores[si, qi, :]
             # print(sample_keys[si],row)

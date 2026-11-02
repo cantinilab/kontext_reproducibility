@@ -109,9 +109,9 @@ def benchmark_path(data,root='.'):
     path.mkdir(parents=True, exist_ok=True)
     return(path)
 
-def compute_Kontext_embedding(adata,sigma_e=1, snn=20, alpha=1):
+def compute_Kontext_embedding(adata,sigma_e=1, snn=20, alpha=1,n_comps=50):
     from kontext.kontext_class import Kontext
-    context = Kontext(sigma_e=sigma_e, snn=snn, alpha=alpha,verbose=True)
+    context = Kontext(sigma_e=sigma_e, snn=snn, alpha=alpha,n_comps=n_comps,verbose=True)
     context.fit(adata,add_layer=True)
     return(adata)
 

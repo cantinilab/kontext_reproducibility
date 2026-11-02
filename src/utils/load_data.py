@@ -15,13 +15,68 @@ from kontext.data import preprocess_adata,get_pp_str
 from kontext.utils import format_key, format_value
 
 
-_BENCHMARK_DIR = Path(__file__).parent
-_DATASET_INFO_PATH = _BENCHMARK_DIR / "datasets_info.json"
+# _BENCHMARK_DIR = Path(__file__).parent
+# _DATASET_INFO_PATH = _BENCHMARK_DIR / "datasets_info.json"
 
 
 def get_dataset_info():
-    with open(_DATASET_INFO_PATH, "r") as f:
-        return json.load(f)
+    return {
+        "MOSTA":{
+            "E9.5_E1S1": {"n_domains": 12, "n_obs": 5913, "n_var": 25568},
+            "E10.5_E1S1": {"n_domains": 13, "n_obs": 18408, "n_var": 25201}, 
+            "E11.5_E1S1": {"n_domains": 19, "n_obs": 30124, "n_var": 26854}, 
+            "E12.5_E1S1": {"n_domains": 23, "n_obs": 51365, "n_var": 27810}, 
+            "E13.5_E1S1": {"n_domains": 19, "n_obs": 77369, "n_var": 28408}, 
+            "E13.5_E1S2": {"n_domains": 19, "n_obs": 64584, "n_var": 28208}, 
+            "E14.5_E1S1": {"n_domains": 26, "n_obs": 102519, "n_var": 28463}, 
+            "E14.5_E1S2": {"n_domains": 21, "n_obs": 102977, "n_var": 28766}, 
+            "E15.5_E1S1": {"n_domains": 26, "n_obs": 113350, "n_var": 28798}, 
+            "E15.5_E1S2": {"n_domains": 22, "n_obs": 109811, "n_var": 28154}, 
+            "E16.5_E1S1": {"n_domains": 25, "n_obs": 121767, "n_var": 28204}},
+        "ZESTA":{
+           "zf3_1":{"n_domains":3,"n_obs":1167,"n_var":6261},
+            "zf5_10":{"n_domains":7,"n_obs":563,"n_var":1962},
+            "zf10_14":{"n_domains":8,"n_obs":1231,"n_var":2756},    
+            "zf12_8":{"n_domains":11,"n_obs":2081,"n_var":4963},     
+           "zf12_9":{"n_domains":11,"n_obs":2588,"n_var":5802},     
+           "zf18_7":{"n_domains":14,"n_obs":3475,"n_var":7522},     
+           "zf18_8":{"n_domains":14,"n_obs":3048,"n_var":9217},
+           "zf18_9":{"n_domains":14,"n_obs":5935,"n_var":12485},     
+           "zf24_4":{"n_domains":19,"n_obs":5271,"n_var":12680},      
+           "zf24_7":{"n_domains":18,"n_obs":6318,"n_var":13786},      
+           "zf24_9":{"n_domains":17,"n_obs":4708,"n_var":13042},
+           "zf24_10":{"n_domains":18,"n_obs":5968,"n_var":13527}},
+          "ARTISTA":{
+            "2DPI_1": {"n_domains": 18, "n_obs": 7668, "n_var": 27324},      
+            "2DPI_2": {"n_domains": 17, "n_obs": 8192, "n_var": 28365},
+            "2DPI_3": {"n_domains": 18, "n_obs": 8738, "n_var": 28371},
+            "5DPI_1": {"n_domains": 19, "n_obs": 8106, "n_var": 28741},
+            "5DPI_2": {"n_domains": 17, "n_obs": 8178, "n_var": 29442},     
+            "5DPI_3": {"n_domains": 17, "n_obs": 8372, "n_var": 29341},
+            "10DPI_1": {"n_domains": 18, "n_obs": 9440, "n_var": 27600},
+            "10DPI_2": {"n_domains": 18, "n_obs": 9600, "n_var": 28602},
+            "10DPI_3": {"n_domains": 18, "n_obs": 10002, "n_var": 27398},    
+            "15DPI_1": {"n_domains": 18, "n_obs": 8996, "n_var": 23331},    
+            "15DPI_2": {"n_domains": 20, "n_obs": 9639, "n_var": 23885},
+            "15DPI_3": {"n_domains": 21, "n_obs": 9676, "n_var": 22297},
+            "15DPI_4": {"n_domains": 18, "n_obs": 10792, "n_var": 23271},
+            "20DPI_1": {"n_domains": 17, "n_obs": 10462, "n_var": 28205},
+            "20DPI_2": {"n_domains": 20, "n_obs": 11319, "n_var": 28987},    
+            "20DPI_3": {"n_domains": 18, "n_obs": 11048, "n_var": 28069},
+            "30DPI": {"n_domains": 17, "n_obs": 9252, "n_var": 19909},
+            "60DPI": {"n_domains": 16, "n_obs": 10964, "n_var": 20038} },
+        "MBA":{
+           "C57BL6J_1_082": {"n_domains":{"ccf_region_name": 170, "major_brain_region": 10, "tissue": 10, "cell_type": 22 },"n_obs": 42117, "n_var": 1120},
+            "C57BL6J_1_053": {"n_domains":{"ccf_region_name": 77, "major_brain_region": 9, "tissue": 9, "cell_type": 19 },"n_obs": 34126, "n_var": 1120},
+            "C57BL6J_1_117": {"n_domains":{"ccf_region_name": 59, "major_brain_region": 6, "tissue": 6, "cell_type": 21 },"n_obs": 22862, "n_var": 1120},
+            "C57BL6J_1_111": {"n_domains":{"ccf_region_name": 89, "major_brain_region": 8, "tissue": 8, "cell_type": 20 },"n_obs": 35171, "n_var": 1120},
+            "C57BL6J_1_113": {"n_domains":{"ccf_region_name": 84, "major_brain_region": 8, "tissue": 8, "cell_type": 21 },"n_obs": 30864, "n_var": 1120},
+               },
+     }
+
+
+    # with open(_DATASET_INFO_PATH, "r") as f:
+    #     return json.load(f)
 
 
 
@@ -95,7 +150,6 @@ def load_ZESTA(sample):
     path = "/pasteur/appa/scratch/aozierla/data/zesta/"
     sampl,slic = sample.split('_')
     adata = sc.read_h5ad(f'{path}{sampl}_stereoseq.h5ad')
-    
     adata.X = adata.layers['counts']
     adata.layers.pop('counts')
 
